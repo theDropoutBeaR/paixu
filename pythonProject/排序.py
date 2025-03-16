@@ -6,7 +6,7 @@ def bubble_sort(arr):
             if arr[j] > arr[j+1]:
                 arr[j], arr[j+1] = arr[j+1], arr[j]  # 交换
     return arr
-# .排序
+# 2.选择排序
 def selection_sort(arr):
     n = len(arr)
     for i in range(n):
@@ -16,7 +16,7 @@ def selection_sort(arr):
                 min_idx = j
         arr[i], arr[min_idx] = arr[min_idx], arr[i]  # 交换
     return arr
-# .排序
+# 3.插入排序
 def insertion_sort(arr):
     for i in range(1, len(arr)):
         key = arr[i]
@@ -28,7 +28,7 @@ def insertion_sort(arr):
     return arr
 
 
-# 2.选择排序
+# 4.希尔排序
 def shell_sort(arr):
     n = len(arr)
     gap = n // 2
@@ -44,7 +44,7 @@ def shell_sort(arr):
     return arr
 
 
-# 3.插入排序
+# 5.归并排序
 def merge_sort(arr):
     if len(arr) > 1:
         mid = len(arr) // 2
@@ -75,7 +75,7 @@ def merge_sort(arr):
     return arr
 
 
-# 4.希尔排序
+# 6.快速排序
 def quick_sort(arr):
     if len(arr) <= 1:
         return arr
@@ -86,7 +86,7 @@ def quick_sort(arr):
     return quick_sort(left) + middle + quick_sort(right)
 
 
-# 5.归并排序
+# 7.堆排序
 def heapify(arr, n, i):
     largest = i
     left = 2 * i + 1
@@ -101,9 +101,6 @@ def heapify(arr, n, i):
     if largest != i:
         arr[i], arr[largest] = arr[largest], arr[i]
         heapify(arr, n, largest)
-
-
-# 6.快速排序
 def heap_sort(arr):
     n = len(arr)
     for i in range(n // 2 - 1, -1, -1):
@@ -115,7 +112,7 @@ def heap_sort(arr):
     return arr
 
 
-# 7.堆排序
+# 8.计数排序
 def counting_sort(arr):
     max_val = max(arr)
     min_val = min(arr)
@@ -136,50 +133,55 @@ def counting_sort(arr):
     return output
 
 
-# 8.计数排序
+# 9.桶排序
 def bucket_sort(arr):
     if len(arr) == 0:
         return arr
+    # Step 1: Create empty buckets
+    bucket_count = 10
     min_value = min(arr)
     max_value = max(arr)
-    bucket_count = (max_value - min_value) // len(arr) + 1
+    bucket_range = (max_value - min_value) / bucket_count + 1
     buckets = [[] for _ in range(bucket_count)]
+
+    # Step 2: Place elements into buckets
     for num in arr:
-        index = (num - min_value) // len(arr)
+        index = int((num - min_value) / bucket_range)
         buckets[index].append(num)
-    result = []
+
+    # Step 3: Sort each bucket and concatenate
+    sorted_arr = []
     for bucket in buckets:
-        result.extend(sorted(bucket))
-    return result
-
-
-# 9.桶排序
-def radix_sort(arr):
-    max_val = max(arr)
-    exp = 1
-    while max_val // exp > 0:
-        counting_sort_radix(arr, exp)
-        exp *= 10
-    return arr
+        sorted_arr.extend(sorted(bucket))
+    return sorted_arr
 
 
 # 10.基数排序
-def counting_sort_radix(arr, exp):
-    n = len(arr)
-    output = [0] * n
-    count = [0] * 10
+def radix_sort(arr):
+    def counting_sort_by_digit(arr, exp):
+        output = [0] * len(arr)
+        count = [0] * 10
 
-    for i in range(n):
-        index = arr[i] // exp
-        count[index % 10] += 1
+        for i in arr:
+            index = i // exp % 10
+            count[index] += 1
 
-    for i in range(1, 10):
-        count[i] += count[i - 1]
+        for i in range(1, 10):
+            count[i] += count[i - 1]
 
-    for i in range(n - 1, -1, -1):
-        index = arr[i] // exp
-        output[count[index % 10] - 1] = arr[i]
-        count[index % 10] -= 1
+        i = len(arr) - 1
+        while i >= 0:
+            index = arr[i] // exp % 10
+            output[count[index] - 1] = arr[i]
+            count[index] -= 1
+            i -= 1
 
-    for i in range(n):
-        arr[i] = output[i]
+        for i in range(len(arr)):
+            arr[i] = output[i]
+
+    max_val = max(arr)
+    exp = 1
+    while max_val // exp > 0:
+        counting_sort_by_digit(arr, exp)
+        exp *= 10
+    return arr
